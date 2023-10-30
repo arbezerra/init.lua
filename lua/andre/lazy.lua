@@ -25,6 +25,10 @@ require('lazy').setup({
     },
   },
 
+  -- None-ls
+  {'nvimtools/none-ls.nvim'},
+  {'jay-babu/mason-null-ls.nvim'},
+
   -- Telescope
   {
     'nvim-telescope/telescope.nvim',

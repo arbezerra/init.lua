@@ -21,9 +21,17 @@ lsp_zero.format_mapping('<leader>f', {
     timeout_ms = 10000,
   },
   servers = {
-    ['prettierd'] = {'javascript', 'typescript'},
+    ['null-ls'] = {'javascript', 'typescript'},
     ['rust_analyzer'] = {'rust'},
   }
+})
+
+local null_ls = require("null-ls")
+null_ls.setup({
+    sources = {
+        null_ls.builtins.formatting.prettierd,
+        null_ls.builtins.diagnostics.eslint_d,
+    },
 })
 
 require('mason').setup({})
@@ -36,6 +44,9 @@ require('mason-lspconfig').setup({
       require('lspconfig').lua_ls.setup(lua_opts)
     end,
   }
+})
+require('mason-null-ls').setup({
+    ensure_installed = {'prettierd', 'eslint_d'},
 })
 
 local cmp = require('cmp')
