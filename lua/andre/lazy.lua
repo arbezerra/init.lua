@@ -119,4 +119,7 @@ require('lazy').setup({
 
   -- Rose Pine
   { 'rose-pine/neovim', name = 'rose-pine' },
+
+  -- Copilot
+  {'github/copilot.vim'},
 })
