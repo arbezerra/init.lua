@@ -106,20 +106,26 @@ require('lazy').setup({
   },
 
   -- Harpoon
-  {'theprimeagen/harpoon'},
+  { 'theprimeagen/harpoon' },
 
   -- Undo Tree
-  {'mbbill/undotree'},
+  { 'mbbill/undotree' },
 
   -- Zen
-  {'folke/zen-mode.nvim'},
-  
+  { 'folke/zen-mode.nvim' },
+
   -- Cloak
-  {'laytan/cloak.nvim'},
+  { 'laytan/cloak.nvim' },
 
   -- Rose Pine
-  { 'rose-pine/neovim', name = 'rose-pine' },
+  {
+    'rose-pine/neovim',
+    name = 'rose-pine'
+  },
 
   -- Copilot
-  {'github/copilot.vim'},
+  {
+    'github/copilot.vim',
+    lazy = false
+  },
 })
