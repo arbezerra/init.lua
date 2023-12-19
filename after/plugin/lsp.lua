@@ -36,6 +36,7 @@ require('mason-lspconfig').setup({
 })
 
 local cmp = require('cmp')
+local cmp_select = {behavior = cmp.SelectBehavior.Select}
 
 local luasnip = require 'luasnip'
 require('luasnip.loaders.from_vscode').lazy_load()
@@ -43,6 +44,7 @@ luasnip.config.setup {}
 
 cmp.setup({
   sources = {
+    { name = 'path' },
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
   },
