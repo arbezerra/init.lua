@@ -1,4 +1,4 @@
-require('andre.lazy')
+require("lazy").setup("andre.lazy")
 require('andre.set')
 require('andre.remap')
 
