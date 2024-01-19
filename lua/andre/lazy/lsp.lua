@@ -80,6 +80,7 @@ return {
 				ensure_installed = {
 					"prettierd",
 					"stylua",
+					"eslint_d",
 				},
 				automatic_installation = false,
 				handlers = {},
