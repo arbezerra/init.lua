@@ -92,7 +92,7 @@ return {
 				callback = function(event)
 					local opts = { buffer = event.buf, remap = false }
 					local filter = function(client)
-						return client.name == "null-ls"
+						return client.name == "null-ls" or client.name == 'svelte'
 					end
 
 					vim.keymap.set("n", "K", function()
