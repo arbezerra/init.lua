@@ -17,6 +17,9 @@ return {
 
 			-- Additional lua configuration, makes nvim stuff amazing!
 			"folke/neodev.nvim",
+
+			-- Sonarlint
+			"https://gitlab.com/schrieveslaach/sonarlint.nvim",
 		},
 		config = function()
 			local lsp = require("lspconfig")
@@ -80,19 +83,41 @@ return {
 				ensure_installed = {
 					"prettierd",
 					"stylua",
-					"eslint_d",
 				},
 				automatic_installation = false,
 				handlers = {},
 			})
 			require("null-ls").setup()
 
+			require("sonarlint").setup({
+				server = {
+					cmd = {
+						"sonarlint-language-server",
+						-- Ensure that sonarlint-language-server uses stdio channel
+						"-stdio",
+						"-analyzers",
+						-- paths to the analyzers you need, using those for python and java in this example
+						vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarpython.jar"),
+						vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarjs.jar"),
+						vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarhtml.jar"),
+						vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarcfamily.jar"),
+					},
+				},
+				filetypes = {
+					-- Tested and working
+					"python",
+					"cpp",
+					"typescript",
+					"html",
+				},
+			})
+
 			vim.api.nvim_create_autocmd("LspAttach", {
 				desc = "LSP actions",
 				callback = function(event)
 					local opts = { buffer = event.buf, remap = false }
 					local filter = function(client)
-						return client.name == "null-ls" or client.name == 'svelte'
+						return client.name == "null-ls" or client.name == "svelte"
 					end
 
 					vim.keymap.set("n", "K", function()
