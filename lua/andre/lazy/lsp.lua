@@ -112,6 +112,16 @@ return {
 				},
 			})
 
+			lsp.tsserver.setup({
+				init_options = {
+					preferences = {
+						-- other preferences...
+						importModuleSpecifierPreference = "relative",
+						importModuleSpecifierEnding = "minimal",
+					},
+				},
+			})
+
 			vim.api.nvim_create_autocmd("LspAttach", {
 				desc = "LSP actions",
 				callback = function(event)
