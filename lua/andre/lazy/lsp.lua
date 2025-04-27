@@ -44,7 +44,7 @@ return {
 					"docker_compose_language_service",
 					"gopls",
 					"lua_ls",
-					"tsserver",
+					"ts_ls",
 					"marksman",
 					"intelephense",
 					"pyright",
@@ -112,7 +112,7 @@ return {
 				},
 			})
 
-			lsp.tsserver.setup({
+			lsp.ts_ls.setup({
 				init_options = {
 					preferences = {
 						-- other preferences...
