@@ -36,6 +36,7 @@ return {
 				ensure_installed = {
 					"angularls",
 					"ansiblels",
+					"basedpyright",
 					"bashls",
 					"clangd",
 					"cmake",
@@ -47,7 +48,6 @@ return {
 					"ts_ls",
 					"marksman",
 					"intelephense",
-					"pyright",
 					"rust_analyzer",
 					"svelte",
 					"tailwindcss",
