@@ -22,14 +22,38 @@ return {
 			"https://gitlab.com/schrieveslaach/sonarlint.nvim",
 		},
 		config = function()
-			local lsp = require("lspconfig")
 			local lsp_capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-			local default_setup = function(server)
-				lsp[server].setup({
-					capabilities = lsp_capabilities,
-				})
-			end
+			vim.lsp.config("*", {
+				capabilities = lsp_capabilities,
+			})
+
+			vim.lsp.config("lua_ls", {
+				settings = {
+					Lua = {
+						runtime = {
+							version = "LuaJIT",
+						},
+						diagnostics = {
+							globals = { "vim" },
+						},
+						workspace = {
+							library = {
+								vim.env.VIMRUNTIME,
+							},
+						},
+					},
+				},
+			})
+
+			vim.lsp.config("ts_ls", {
+				init_options = {
+					preferences = {
+						importModuleSpecifierPreference = "relative",
+						importModuleSpecifierEnding = "minimal",
+					},
+				},
+			})
 
 			require("mason").setup({})
 			require("mason-lspconfig").setup({
@@ -53,30 +77,7 @@ return {
 					"tailwindcss",
 					"yamlls",
 				},
-				automatic_installation = true,
-				handlers = {
-					default_setup,
-					lua_ls = function()
-						require("lspconfig").lua_ls.setup({
-							capabilities = lsp_capabilities,
-							settings = {
-								Lua = {
-									runtime = {
-										version = "LuaJIT",
-									},
-									diagnostics = {
-										globals = { "vim" },
-									},
-									workspace = {
-										library = {
-											vim.env.VIMRUNTIME,
-										},
-									},
-								},
-							},
-						})
-					end,
-				},
+				automatic_enable = true,
 			})
 
 			require("mason-null-ls").setup({
@@ -89,6 +90,26 @@ return {
 			})
 			require("null-ls").setup()
 
+			local ensure_mason_package = function(package_name)
+				local registry = require("mason-registry")
+				local function install()
+					local ok, package = pcall(registry.get_package, package_name)
+					if ok and not package:is_installed() then
+						package:install()
+					end
+				end
+
+				if registry.refresh then
+					registry.refresh(install)
+				else
+					install()
+				end
+			end
+
+			if #vim.api.nvim_list_uis() > 0 then
+				ensure_mason_package("sonarlint-language-server")
+			end
+
 			require("sonarlint").setup({
 				server = {
 					cmd = {
@@ -100,25 +121,13 @@ return {
 						vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarpython.jar"),
 						vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarjs.jar"),
 						vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarhtml.jar"),
-						vim.fn.expand("$MASON/share/sonarlint-analyzers/sonarcfamily.jar"),
 					},
 				},
 				filetypes = {
 					-- Tested and working
 					"python",
-					"cpp",
 					"typescript",
 					"html",
-				},
-			})
-
-			lsp.ts_ls.setup({
-				init_options = {
-					preferences = {
-						-- other preferences...
-						importModuleSpecifierPreference = "relative",
-						importModuleSpecifierEnding = "minimal",
-					},
 				},
 			})
 
@@ -152,10 +161,10 @@ return {
 						vim.diagnostic.open_float()
 					end, opts)
 					vim.keymap.set("n", "[d", function()
-						vim.diagnostic.goto_next()
+						vim.diagnostic.jump({ count = -1 })
 					end, opts)
 					vim.keymap.set("n", "]d", function()
-						vim.diagnostic.goto_prev()
+						vim.diagnostic.jump({ count = 1 })
 					end, opts)
 					vim.keymap.set("n", "<leader>vca", function()
 						vim.lsp.buf.code_action()

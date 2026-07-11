@@ -7,12 +7,23 @@ return {
 		},
 		build = ":TSUpdate",
 		config = function()
-			local treesitter = require("nvim-treesitter.configs")
+			local treesitter = require("nvim-treesitter")
+			local parsers = { "c", "lua", "vim", "vimdoc", "query", "javascript", "html" }
+			local installed = treesitter.get_installed()
+			local missing = vim.tbl_filter(function(parser)
+				return not vim.list_contains(installed, parser)
+			end, parsers)
 
-			treesitter.setup({
-				ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "javascript", "html" },
-				sync_install = false,
-				highlight = { enable = true },
+			treesitter.setup({})
+			if #missing > 0 then
+				treesitter.install(missing)
+			end
+
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = { "c", "lua", "vim", "help", "query", "javascript", "html" },
+				callback = function()
+					pcall(vim.treesitter.start)
+				end,
 			})
 		end,
 	},
