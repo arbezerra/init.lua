@@ -135,8 +135,25 @@ return {
 				desc = "LSP actions",
 				callback = function(event)
 					local opts = { buffer = event.buf, remap = false }
-					local filter = function(client)
-						return client.name == "null-ls" or client.name == "svelte"
+					local function format()
+						-- Prefer none-ls when it has a formatter for this buffer (prettierd,
+						-- stylua, or black). Otherwise, let the attached language server
+						-- format the buffer instead.
+						local null_ls_available = false
+						for _, client in ipairs(vim.lsp.get_clients({ bufnr = event.buf })) do
+							if client.name == "null-ls" and client:supports_method("textDocument/formatting", event.buf) then
+								null_ls_available = true
+								break
+							end
+						end
+
+						vim.lsp.buf.format({
+							async = true,
+							bufnr = event.buf,
+							filter = function(client)
+								return client.name == "null-ls" or not null_ls_available
+							end,
+						})
 					end
 
 					vim.keymap.set("n", "K", function()
@@ -179,7 +196,7 @@ return {
 						vim.lsp.buf.signature_help()
 					end, opts)
 					vim.keymap.set({ "n", "x" }, "<leader>f", function()
-						vim.lsp.buf.format({ filter = filter, async = true })
+						format()
 					end, opts)
 				end,
 			})
